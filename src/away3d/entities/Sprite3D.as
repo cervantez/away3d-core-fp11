@@ -3,21 +3,16 @@ package away3d.entities
 
 	import away3d.animators.IAnimator;
 	import away3d.arcane;
-	import away3d.bounds.AxisAlignedBoundingBox;
 	import away3d.bounds.BoundingSphere;
 	import away3d.bounds.BoundingVolumeBase;
 	import away3d.cameras.Camera3D;
 	import away3d.core.base.IRenderable;
-	import away3d.core.base.Object3D;
 	import away3d.core.base.SubGeometry;
 	import away3d.core.managers.Stage3DProxy;
 	import away3d.core.partition.EntityNode;
 	import away3d.core.partition.RenderableNode;
 	import away3d.materials.MaterialBase;
-	import away3d.materials.TextureMaterial;
-	import away3d.textures.BitmapTexture;
-	
-	import flash.display.BitmapData;
+
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Matrix;
@@ -58,18 +53,6 @@ package away3d.entities
 				_geometry.updateVertexTangentData( Vector.<Number>( [1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0] ) );
 				_geometry.updateVertexNormalData( Vector.<Number>( [.0, .0, -1.0, .0, .0, -1.0, .0, .0, -1.0, .0, .0, -1.0] ) );
 			}
-		}
-		
-		override public function clone():Object3D
-		{
-			var tex:TextureMaterial=this.material as TextureMaterial;
-			var bmpTexResource:BitmapTexture=tex.texture as BitmapTexture;
-			var bmpd:BitmapData=bmpTexResource.bitmapData.clone();
-			var copy:TextureMaterial=new TextureMaterial(new BitmapTexture(bmpd));
-			copy.alphaBlending=true;
-			var clone:Sprite3D=new Sprite3D(copy,bmpd.width,bmpd.height);
-			clone.mouseEnabled=true;
-			return clone;
 		}
 
 		public function get width():Number {
@@ -166,7 +149,7 @@ package away3d.entities
 		}
 
 		override protected function getDefaultBoundingVolume():BoundingVolumeBase {
-			return new AxisAlignedBoundingBox();
+			return new BoundingSphere();
 		}
 
 		override protected function updateBounds():void {
