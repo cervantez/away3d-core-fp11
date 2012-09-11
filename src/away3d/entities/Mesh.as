@@ -9,8 +9,6 @@
 	import away3d.library.assets.*;
 	import away3d.materials.*;
 	import away3d.materials.utils.DefaultMaterialManager;
-	
-	import flash.geom.Utils3D;
 
 	use namespace arcane;
 
