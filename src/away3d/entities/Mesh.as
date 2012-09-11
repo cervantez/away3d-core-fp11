@@ -1,6 +1,5 @@
 ﻿package away3d.entities
 {
-	import away3d.materials.utils.DefaultMaterialManager;
 	import away3d.animators.IAnimator;
 	import away3d.arcane;
 	import away3d.containers.*;
@@ -9,6 +8,9 @@
 	import away3d.events.*;
 	import away3d.library.assets.*;
 	import away3d.materials.*;
+	import away3d.materials.utils.DefaultMaterialManager;
+	
+	import flash.geom.Utils3D;
 
 	use namespace arcane;
 
@@ -213,6 +215,11 @@
 			clone.bounds = _bounds.clone();
 			clone.name = name;
 			clone.castsShadows = castsShadows;
+			clone.mouseEnabled=this.mouseEnabled;
+			clone.mouseChildren=this.mouseChildren;
+			//this is of course no proper cloning
+			//maybe use this instead?: http://blog.another-d-mention.ro/programming/how-to-clone-duplicate-an-object-in-actionscript-3/
+			clone.extra=this.extra;
 
 			var len : int = _subMeshes.length;
 			for (var i : int = 0; i < len; ++i) {
