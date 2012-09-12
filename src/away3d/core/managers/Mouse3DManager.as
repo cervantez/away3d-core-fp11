@@ -45,6 +45,8 @@ package away3d.core.managers
 		 */
 		public function Mouse3DManager()
 		{
+			
+			
 		}
 
 		// ---------------------------------------------------------------------
@@ -56,8 +58,9 @@ package away3d.core.managers
 			_previousCollidingObject = _collidingObject;
 
 			if (view == _activeView && (_forceMouseMove || _updateDirty)) { // If forceMouseMove is off, and no 2D mouse events dirtied the update, don't update either.
-				_collidingObject = _mousePicker.getViewCollision(view.mouseX, view.mouseY, view);
+				_collidingObject = _mousePicker.getViewCollision(view.mouseX*view.screenDpiFactor, view.mouseY*view.screenDpiFactor, view);
 			}
+
 
 			_updateDirty = false;
 		}
@@ -109,7 +112,7 @@ package away3d.core.managers
 			event.delta = sourceEvent.delta;
 			event.screenX = sourceEvent.localX;
 			event.screenY = sourceEvent.localY;
-
+			
 			collider ||= _collidingObject;
 
 			// 3D properties.

@@ -81,6 +81,10 @@
 		private var _shareContext:Boolean = false;
 		private var _viewScissoRect:Rectangle;
 		
+		//Factor of "internal size" (pixel*pixel) to "displayed size" (influenced by screenDpi and application Dpi). 
+		//Is used in MouseEvent Management to correct the position of mouse events (given in internal size) to display coordinates
+		public var screenDpiFactor:Number=1;
+		
 		private function viewSource(e:ContextMenuEvent):void 
 		{
 			var request:URLRequest = new URLRequest(_sourceURL);
