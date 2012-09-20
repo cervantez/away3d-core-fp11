@@ -7,6 +7,7 @@ package away3d.core.managers
 	import away3d.core.pick.PickingCollisionVO;
 	import away3d.core.pick.PickingType;
 	import away3d.events.MouseEvent3D;
+	import flash.events.TouchEvent;
 
 	import flash.events.MouseEvent;
 
@@ -39,6 +40,9 @@ package away3d.core.managers
 		private static var _mouseDoubleClick : MouseEvent3D = new MouseEvent3D(MouseEvent3D.DOUBLE_CLICK);
 		private var _forceMouseMove : Boolean;
 		private var _mousePicker : IPicker = PickingType.RAYCAST_FIRST_ENCOUNTERED;
+		
+		//Remember which target mouse went down on in order to repair click events (mouse up/down on same object)
+		private var _mouseDownTarget:ObjectContainer3D;
 
 		/**
 		 * Creates a new <code>Mouse3DManager</code> object.
@@ -163,9 +167,18 @@ package away3d.core.managers
 			_updateDirty = true;
 		}
 
+		
+		
 		private function onClick(event : MouseEvent) : void
 		{
-			if (_collidingObject) queueDispatch(_mouseClick, event);
+			if (_collidingObject)
+			{
+				if(this._mouseDownTarget==_collidingObject.entity)
+				{
+					queueDispatch(_mouseClick, event);
+				}
+			}
+			this._mouseDownTarget=null;
 			_updateDirty = true;
 		}
 
@@ -174,16 +187,24 @@ package away3d.core.managers
 			if (_collidingObject) queueDispatch(_mouseDoubleClick, event);
 			_updateDirty = true;
 		}
-
+		
 		private function onMouseDown(event : MouseEvent) : void
 		{
-			if (_collidingObject) queueDispatch(_mouseDown, event);
+			updateCollider(event.currentTarget as View3D);
+			if (_collidingObject)
+			{
+				this._mouseDownTarget=_collidingObject.entity;
+				queueDispatch(_mouseDown, event);
+			}
 			_updateDirty = true;
 		}
 
 		private function onMouseUp(event : MouseEvent) : void
 		{
-			if (_collidingObject) queueDispatch(_mouseUp, event);
+			if (_collidingObject)
+			{
+				queueDispatch(_mouseUp, event);
+			}
 			_updateDirty = true;
 		}
 
