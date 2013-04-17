@@ -284,9 +284,23 @@ package away3d.entities
 
 			var mvp : Matrix3D = _mvpTransformStack[_mvpIndex];
 			mvp.copyFrom(sceneTransform);
-			mvp.append(camera.viewProjection);
+			
+			
+			if (this.name == "ontop")
+			{
+				var m:Matrix3D = camera.viewProjection.clone();
+				var msk:Matrix3D = new  Matrix3D(Vector.<Number>([11,0,0,0,0,11,0,0,0,0,10,0,0,0,0,11])); //WARUM 11???
+				m.append(msk)
+				mvp.append( m);
+
+			}  
+			else
+			{
+				mvp.append(camera.viewProjection);
+			}
+			
 			mvp.copyColumnTo(3, _pos);
-			_zIndices[_mvpIndex] = -_pos.z;
+			_zIndices[_mvpIndex] = -_pos.z + 1000000 + _zOffset;
 		}
 		
 		/**
@@ -312,6 +326,29 @@ package away3d.entities
 		public function getEntityPartitionNode() : EntityNode
 		{
 			return _partitionNode ||= createEntityPartitionNode();
+		}
+		
+		public function isIntersectingRay(rayPosition : Vector3D, rayDirection : Vector3D) : Boolean
+		{
+			// convert ray to entity space
+			var localRayPosition:Vector3D = inverseSceneTransform.transformVector( rayPosition );
+			var localRayDirection:Vector3D = inverseSceneTransform.deltaTransformVector( rayDirection );
+			
+			// check for ray-bounds collision
+			var rayEntryDistance:Number = bounds.rayIntersection( localRayPosition, localRayDirection, pickingCollisionVO.localNormal ||= new Vector3D());
+			
+			if( rayEntryDistance < 0 )
+				return false;
+			
+			// Store collision data.
+			pickingCollisionVO.rayEntryDistance = rayEntryDistance;
+			pickingCollisionVO.localRayPosition = localRayPosition;
+			pickingCollisionVO.localRayDirection = localRayDirection;
+			pickingCollisionVO.rayPosition = rayPosition;
+			pickingCollisionVO.rayDirection = rayDirection;
+			pickingCollisionVO.rayOriginIsInsideBounds = rayEntryDistance == 0;
+			
+			return true;
 		}
 		
 		/**
