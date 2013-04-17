@@ -765,7 +765,6 @@
 
 			_stage3DManager = Stage3DManager.getInstance(stage);
 			if (!_stage3DProxy) _stage3DProxy = _stage3DManager.getFreeStage3DProxy(_forceSoftware);
-
 			_stage3DProxy.x = _globalPos.x;
 			_rttBufferManager = RTTBufferManager.getInstance(_stage3DProxy);
 			_stage3DProxy.y = _globalPos.y;
