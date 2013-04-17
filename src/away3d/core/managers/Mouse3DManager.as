@@ -39,6 +39,10 @@ package away3d.core.managers
 		private static var _mouseDoubleClick : MouseEvent3D = new MouseEvent3D(MouseEvent3D.DOUBLE_CLICK);
 		private var _forceMouseMove : Boolean;
 		private var _mousePicker : IPicker = PickingType.RAYCAST_FIRST_ENCOUNTERED;
+		
+		
+		//Remember which target mouse went down on in order to repair click events (mouse up/down on same object)
+		private var _mouseDownTarget:ObjectContainer3D;
 
 		/**
 		 * Creates a new <code>Mouse3DManager</code> object.
@@ -56,7 +60,8 @@ package away3d.core.managers
 			_previousCollidingObject = _collidingObject;
 
 			if (view == _activeView && (_forceMouseMove || _updateDirty)) { // If forceMouseMove is off, and no 2D mouse events dirtied the update, don't update either.
-				_collidingObject = _mousePicker.getViewCollision(view.mouseX, view.mouseY, view);
+				//_collidingObject = _mousePicker.getViewCollision(view.mouseX, view.mouseY, view);
+				_collidingObject = _mousePicker.getViewCollision(view.mouseX*view.screenDpiFactor, view.mouseY*view.screenDpiFactor, view);
 			}
 
 			_updateDirty = false;
@@ -162,7 +167,14 @@ package away3d.core.managers
 
 		private function onClick(event : MouseEvent) : void
 		{
-			if (_collidingObject) queueDispatch(_mouseClick, event);
+			if (_collidingObject)
+			{
+				if(this._mouseDownTarget==_collidingObject.entity)
+				{
+					queueDispatch(_mouseClick, event);
+				}
+			}
+			this._mouseDownTarget=null;
 			_updateDirty = true;
 		}
 
@@ -175,13 +187,20 @@ package away3d.core.managers
 		private function onMouseDown(event : MouseEvent) : void
 		{
 			updateCollider( _activeView ); // ensures collision check is done with correct mouse coordinates on mobile
-			if (_collidingObject) queueDispatch(_mouseDown, event);
+			if (_collidingObject)
+			{
+				this._mouseDownTarget=_collidingObject.entity;
+				queueDispatch(_mouseDown, event);
+			}
 			_updateDirty = true;
 		}
 
 		private function onMouseUp(event : MouseEvent) : void
 		{
-			if (_collidingObject) queueDispatch(_mouseUp, event);
+			if (_collidingObject)
+			{
+				queueDispatch(_mouseUp, event);
+			}
 			_updateDirty = true;
 		}
 
