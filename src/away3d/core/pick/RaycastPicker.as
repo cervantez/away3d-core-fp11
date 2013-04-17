@@ -1,16 +1,15 @@
 package away3d.core.pick
 {
 
+	import away3d.arcane;
 	import away3d.bounds.BoundingVolumeBase;
 	import away3d.containers.Scene3D;
 	import away3d.containers.View3D;
-	import away3d.arcane;
 	import away3d.core.data.EntityListItem;
 	import away3d.core.traverse.EntityCollector;
 	import away3d.entities.Entity;
-
+	
 	import flash.geom.Matrix3D;
-
 	import flash.geom.Vector3D;
 
 	use namespace arcane;
@@ -89,6 +88,9 @@ package away3d.core.pick
 					rayEntryDistance = bounds.rayIntersection( localRayPosition, localRayDirection, pickingCollisionVO.localNormal ||= new Vector3D());
 
 					if( rayEntryDistance >= 0 ) {
+						
+						
+						
 						_hasCollisions = true;
 
 						// Store collision data.
@@ -99,6 +101,12 @@ package away3d.core.pick
 
 						// Store in new data set.
 						_entities[_numEntities++] = entity;
+						
+						//EDITED
+						if(entity.name=="ontop")
+						{
+							return pickingCollisionVO;
+						}
 					}
 				}
 				node = node.next;

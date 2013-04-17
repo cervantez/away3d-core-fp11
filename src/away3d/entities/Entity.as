@@ -284,7 +284,21 @@ package away3d.entities
 
 			var mvp : Matrix3D = _mvpTransformStack[_mvpIndex];
 			mvp.copyFrom(sceneTransform);
-			mvp.append(camera.viewProjection);
+			
+			
+			if (this.name == "ontop")
+			{
+				var m:Matrix3D = camera.viewProjection.clone();
+				var msk:Matrix3D = new  Matrix3D(Vector.<Number>([11,0,0,0,0,11,0,0,0,0,10,0,0,0,0,11])); //WARUM 11???
+				m.append(msk)
+				mvp.append( m);
+
+			}  
+			else
+			{
+				mvp.append(camera.viewProjection);
+			}
+			
 			mvp.copyColumnTo(3, _pos);
 			_zIndices[_mvpIndex] = -_pos.z;
 		}
