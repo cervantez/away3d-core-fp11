@@ -1,7 +1,7 @@
 package away3d.core.managers
 {
 	import away3d.arcane;
-
+	
 	import flash.display.Stage;
 	import flash.utils.Dictionary;
 
@@ -91,8 +91,6 @@ package away3d.core.managers
 				}
 				++i;
 			}
-
-			throw new Error("Too many Stage3D instances used!");
 			return null;
 		}
 

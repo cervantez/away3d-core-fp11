@@ -9,7 +9,7 @@ package away3d.core.pick
 	import away3d.core.traverse.EntityCollector;
 	import away3d.core.traverse.RaycastCollector;
 	import away3d.entities.Entity;
-
+	
 	use namespace arcane;
 	
 	/**
@@ -20,7 +20,7 @@ package away3d.core.pick
 	public class RaycastPicker implements IPicker
 	{
 		// TODO: add option of finding best hit?
-
+		
 		private var _findClosestCollision:Boolean;
 		private var _raycastCollector:RaycastCollector = new RaycastCollector();
 		private var _ignoredEntities:Array = new Array();
@@ -50,11 +50,11 @@ package away3d.core.pick
 		 * or simply returns the first collision encountered Defaults to false.
 		 */
 		public function RaycastPicker( findClosestCollision:Boolean ) {
-
+			
 			_findClosestCollision = findClosestCollision;
 			_entities = new Vector.<Entity>();
 		}
-
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -63,15 +63,15 @@ package away3d.core.pick
 			//cast ray through the collection of entities on the view
 			var collector:EntityCollector = view.entityCollector;
 			var i:uint;
-
+			
 			if( collector.numMouseEnableds == 0 )
 				return null;
-
+			
 			//update ray
 			var rayPosition:Vector3D = view.unproject( x, y, 0 );
 			var rayDirection:Vector3D = view.unproject( x, y, 1 );
 			rayDirection = rayDirection.subtract( rayPosition );
-
+			
 			// Perform ray-bounds collision checks.
 			_numEntities = 0;
 			var node : EntityListItem = collector.entityHead;
@@ -97,7 +97,7 @@ package away3d.core.pick
 			
 			return getPickingCollisionVO();
 		}
-
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -148,8 +148,8 @@ package away3d.core.pick
 			
 			var ignoredEntity:Entity;
 			for each (ignoredEntity in _ignoredEntities)
-				if (ignoredEntity == entity)
-					return true;
+			if (ignoredEntity == entity)
+				return true;
 			
 			return false;
 		}
@@ -163,15 +163,15 @@ package away3d.core.pick
 		{
 			// trim before sorting
 			_entities.length = _numEntities;
-
+			
 			// Sort entities from closest to furthest.
 			_entities = _entities.sort( sortOnNearT );
-
+			
 			// ---------------------------------------------------------------------
 			// Evaluate triangle collisions when needed.
 			// Replaces collision data provided by bounds collider with more precise data.
 			// ---------------------------------------------------------------------
-
+			
 			var shortestCollisionDistance:Number = Number.MAX_VALUE;
 			var bestCollisionVO:PickingCollisionVO;
 			var pickingCollisionVO:PickingCollisionVO;
@@ -203,10 +203,10 @@ package away3d.core.pick
 					}
 				}
 			}
-
+			
 			return bestCollisionVO;
 		}
-
+		
 		private function updateLocalPosition(pickingCollisionVO : PickingCollisionVO) : void
 		{
 			var collisionPos : Vector3D = pickingCollisionVO.localPosition ||= new Vector3D();
