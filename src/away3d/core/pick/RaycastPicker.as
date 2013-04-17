@@ -79,6 +79,8 @@ package away3d.core.pick
 			while (node) {
 				entity = node.entity;
 				
+			
+				
 				if (isIgnored(entity)) {
 					node = node.next;
 					continue;
@@ -86,8 +88,16 @@ package away3d.core.pick
 				
 				// If collision detected, store in new data set.
 				if( entity.isVisible && entity.isIntersectingRay(rayPosition, rayDirection ))
+				{
 					_entities[_numEntities++] = entity;
-				
+					
+					//EDITED
+					if(entity.name=="ontop")
+					{
+						updateLocalPosition(entity._pickingCollisionVO);
+						return entity._pickingCollisionVO;
+					}
+				}
 				node = node.next;
 			}
 			
