@@ -309,8 +309,12 @@ package away3d.core.managers
 		
 		private function onClick(event:MouseEvent):void
 		{
-			if (_collidingObject) {
+			_activeView = (event.currentTarget as View3D);
+			updateCollider(_activeView); // ensures collision check is done with correct mouse coordinates on mobile
+			if (_collidingObject && _collidingUpObject == _collidingDownObject) {
 				queueDispatch(_mouseClick, event);
+				_collidingUpObject = null;
+				_collidingDownObject = null;
 			} else
 				reThrowEvent(event);
 			_updateDirty = true;
@@ -318,7 +322,7 @@ package away3d.core.managers
 		
 		private function onDoubleClick(event:MouseEvent):void
 		{
-			if (_collidingObject)
+			if (_collidingObject && _collidingUpObject == _collidingDownObject)
 				queueDispatch(_mouseDoubleClick, event);
 			else
 				reThrowEvent(event);
@@ -331,7 +335,8 @@ package away3d.core.managers
 			updateCollider(_activeView); // ensures collision check is done with correct mouse coordinates on mobile
 			if (_collidingObject) {
 				queueDispatch(_mouseDown, event);
-				_previousCollidingObject = _collidingObject;
+				_collidingUpObject = null;
+				_collidingDownObject = _collidingObject;
 			} else
 				reThrowEvent(event);
 			_updateDirty = true;
@@ -339,9 +344,11 @@ package away3d.core.managers
 		
 		private function onMouseUp(event:MouseEvent):void
 		{
+			_activeView = (event.currentTarget as View3D);
+			updateCollider(_activeView); // ensures collision check is done with correct mouse coordinates on mobile
 			if (_collidingObject) {
 				queueDispatch(_mouseUp, event);
-				_previousCollidingObject = _collidingObject;
+				_collidingUpObject = _collidingObject;
 			} else
 				reThrowEvent(event);
 			_updateDirty = true;
