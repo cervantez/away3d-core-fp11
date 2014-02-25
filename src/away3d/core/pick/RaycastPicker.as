@@ -93,13 +93,6 @@ package away3d.core.pick
 				if (entity.isVisible && entity.isIntersectingRay(rayPosition, rayDirection))
 				{
 					_entities[_numEntities++] = entity;
-					//EDITED
-					if(entity.name=="ontop")
-					{
-						updateLocalPosition(entity._pickingCollisionVO);
-						return entity._pickingCollisionVO;
-					}
-
 				}
 				
 				node = node.next;
@@ -186,7 +179,19 @@ package away3d.core.pick
 		
 		private function sortOnNearT(entity1:Entity, entity2:Entity):Number
 		{
-			return entity1.pickingCollisionVO.rayEntryDistance > entity2.pickingCollisionVO.rayEntryDistance? 1 : -1;
+			//ON TOP HACK
+			if(entity1.name=="ontop" && entity2.name!="ontop")
+			{
+				return -1;
+			}
+			else if(entity2.name=="ontop" && entity1.name!="ontop")
+			{
+				return 1;
+			}
+			else
+			{
+				return entity1.pickingCollisionVO.rayEntryDistance > entity2.pickingCollisionVO.rayEntryDistance? 1 : -1;
+			}
 		}
 		
 		private function getPickingCollisionVO():PickingCollisionVO

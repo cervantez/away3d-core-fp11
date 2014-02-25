@@ -1,10 +1,16 @@
 package away3d.materials.passes
 {
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
+	import flash.geom.Matrix;
+	import flash.geom.Matrix3D;
+	
 	import away3d.arcane;
 	import away3d.cameras.Camera3D;
 	import away3d.core.base.IRenderable;
 	import away3d.core.managers.Stage3DProxy;
 	import away3d.core.math.Matrix3DUtils;
+	import away3d.entities.Entity;
 	import away3d.errors.AbstractMethodError;
 	import away3d.events.ShadingMethodEvent;
 	import away3d.materials.LightSources;
@@ -18,11 +24,6 @@ package away3d.materials.passes
 	import away3d.materials.methods.ShaderMethodSetup;
 	import away3d.materials.methods.ShadowMapMethodBase;
 	import away3d.textures.Texture2DBase;
-	
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProgramType;
-	import flash.geom.Matrix;
-	import flash.geom.Matrix3D;
 	
 	use namespace arcane;
 
@@ -631,15 +632,32 @@ package away3d.materials.passes
 			if (_sceneMatrixIndex >= 0) {
 				renderable.getRenderSceneTransform(camera).copyRawDataTo(_vertexConstantData, _sceneMatrixIndex, true);
 				viewProjection.copyRawDataTo(_vertexConstantData, 0, true);
-			} else {
+			} 
+			else 
+			{
 				var matrix3D:Matrix3D = Matrix3DUtils.CALCULATION_MATRIX;
 				matrix3D.copyFrom(renderable.getRenderSceneTransform(camera));
-				matrix3D.append(viewProjection);
+				
+				//HACK START
+				if (renderable.sourceEntity.name == "ontop")
+				{
+					var m:Matrix3D = viewProjection.clone();
+					var msk:Matrix3D = new  Matrix3D(Vector.<Number>([11,0,0,0,0,11,0,0,0,0,10,0,0,0,0,11])); //WARUM 11???
+					m.append(msk);
+					matrix3D.append(m);
+				}  
+				
+				else
+				{
+				//HACK END
+					matrix3D.append(viewProjection);
+				}
+				
 				matrix3D.copyRawDataTo(_vertexConstantData, 0, true);
 			}
 			
-			if (_sceneNormalMatrixIndex >= 0)
-				renderable.inverseSceneTransform.copyRawDataTo(_vertexConstantData, _sceneNormalMatrixIndex, false);
+			//if (_sceneNormalMatrixIndex >= 0)
+				//renderable.inverseSceneTransform.copyRawDataTo(_vertexConstantData, _sceneNormalMatrixIndex, false);
 			
 			if (_usesNormals)
 				_methodSetup._normalMethod.setRenderState(_methodSetup._normalMethodVO, renderable, stage3DProxy, camera);
